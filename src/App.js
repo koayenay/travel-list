@@ -7,7 +7,6 @@ const initialItems = [
 
 export default function App() {
   const [items, setItems] = useState([])
-  const numItems = items.length
 
   function handleAddItems(item) {
     setItems((items) => [...items, item])
@@ -33,7 +32,7 @@ export default function App() {
         onDeleteItem={handleDeleteItem}
         onToggleItems={handleToggleItem}
       />
-      <Stats />
+      <Stats items={items} />
     </div>
   )
 }
@@ -116,10 +115,21 @@ function Item({ item, onDeleteItem, onToggleItems }) {
   )
 }
 
-function Stats() {
+function Stats({ items }) {
+  if (!items.length)
+    return <p className='stats'>Start adding some items to your packing list</p>
+
+  const numItems = items.length
+  const numPacked = items.filter((item) => item.packed).length
+  const percentage = Math.round(numPacked / numItems) * 100
+
   return (
     <footer className='stats'>
-      You have X items on your list, and you already packed X (X%)
+      <em>
+        {percentage === 100
+          ? "You have got everything ready to go ✈️"
+          : `You have ${numItems} items on your list, and you already packed ${numPacked} (${percentage}%)`}
+      </em>
     </footer>
   )
 }
