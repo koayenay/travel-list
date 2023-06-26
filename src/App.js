@@ -7,6 +7,7 @@ const initialItems = [
 
 export default function App() {
   const [items, setItems] = useState([])
+  const numItems = items.length
 
   function handleAddItems(item) {
     setItems((items) => [...items, item])
@@ -15,11 +16,23 @@ export default function App() {
   function handleDeleteItem(id) {
     setItems((items) => items.filter((item) => item.id !== id))
   }
+
+  function handleToggleItem(id) {
+    setItems((items) =>
+      items.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
+    )
+  }
   return (
     <div className='app'>
       <Logo />
       <Form onAddItems={handleAddItems} />
-      <PackingList items={items} onDeleteItem={handleDeleteItem} />
+      <PackingList
+        items={items}
+        onDeleteItem={handleDeleteItem}
+        onToggleItems={handleToggleItem}
+      />
       <Stats />
     </div>
   )
@@ -44,6 +57,7 @@ function Form({ onAddItems }) {
     setDescription("")
     setQuantity(1)
   }
+
   return (
     <form className='add-form' onSubmit={handleSubmit}>
       <h3>What do you need for your trip?</h3>
@@ -67,21 +81,33 @@ function Form({ onAddItems }) {
     </form>
   )
 }
-function PackingList({ items, onDeleteItem }) {
+function PackingList({ items, onDeleteItem, onToggleItems }) {
   return (
     <div className='list'>
       <ul>
         {items.map((item) => (
-          <Item item={item} onDeleteItem={onDeleteItem} key={item.id} />
+          <Item
+            item={item}
+            onDeleteItem={onDeleteItem}
+            onToggleItems={onToggleItems}
+            key={item.id}
+          />
         ))}
       </ul>
     </div>
   )
 }
 
-function Item({ item, onDeleteItem }) {
+function Item({ item, onDeleteItem, onToggleItems }) {
   return (
     <li>
+      <input
+        type='checkbox'
+        value={item.packed}
+        onChange={() => {
+          onToggleItems(item.id)
+        }}
+      />
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span>
@@ -97,5 +123,3 @@ function Stats() {
     </footer>
   )
 }
-
-7
