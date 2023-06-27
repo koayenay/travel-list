@@ -87,6 +87,16 @@ function PackingList({ items, onDeleteItem, onToggleItems }) {
 
   if (sortBy === "input") sortedItems = items
 
+  if (sortBy === "description")
+    sortedItems = items
+      .slice()
+      .sort((a, b) => a.description.localeCompare(b.description))
+
+  if (sortBy === "packed")
+    sortedItems = items
+      .slice()
+      .sort((a, b) => Number(b.packed) - Number(a.packed))
+
   return (
     <>
       <div className='list'>
